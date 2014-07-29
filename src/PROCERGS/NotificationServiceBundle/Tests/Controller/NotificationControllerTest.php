@@ -20,7 +20,7 @@ class NotificationControllerTest extends WebTestCase
         $this->client->request(
                 'POST', '/api/v1/notifications.json', array(), array(),
                 array('CONTENT_TYPE' => 'application/json'),
-                '{"title":"title1","shortText":"shortText1","text":"text1"}'
+                '{"title":"title1","shortText":"shortText1","text":"text1","level":1,"receiver":"receiver1","sender":"sender1"}'
         );
         $this->assertJsonResponse($this->client->getResponse(), 201, false);
     }
