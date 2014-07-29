@@ -4,7 +4,7 @@
     "type": "project",
     "description": "The \"Symfony Standard Edition\" distribution",
     "autoload": {
-        "psr-0": { "": "src/" }
+        "psr-0": {"": "src/"}
     },
     "require": {
         "php": ">=5.3.3",
@@ -22,6 +22,11 @@
         "friendsofsymfony/rest-bundle": "@dev",
         "jms/serializer-bundle": "@dev",
         "nelmio/api-doc-bundle": "@dev"
+    },
+    "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "dev-master",
+        "phpunit/phpunit": "3.7.*",
+        "liip/functional-test-bundle": "dev-master"
     },
     "scripts": {
         "post-install-cmd": [

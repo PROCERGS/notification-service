@@ -1,0 +1,5 @@
+procergs_notification_service_Notification:
+    type: rest
+    prefix: /v1
+    resource: "@PROCERGSNotificationServiceBundle/Controller/NotificationController.php"
+    name_prefix: api_1_

@@ -1,0 +1,10 @@
+PROCERGS\NotificationServiceBundle\Entity\Notification:
+    properties:
+        title:
+            - NotBlank: ~
+            - NotNull: ~
+            - Length:
+                min: 2
+                max: 100
+                minMessage: "Your title is too small"
+                maxMessage: "Your title is too long"
