@@ -10,9 +10,41 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpFoundation\Request;
 use PROCERGS\NotificationServiceBundle\Exception\InvalidFormException;
 use PROCERGS\NotificationServiceBundle\Form\NotificationType;
+use FOS\RestBundle\Request\ParamFetcherInterface;
 
 class NotificationController extends FOSRestController
 {
+
+    /**
+     * List all notifications.
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   statusCodes = {
+     *     200 = "Returned when successful"
+     *   }
+     * )
+     *
+     * @Annotations\QueryParam(name="offset", requirements="\d+", nullable=true, description="Offset from which to start listing Notifications")
+     * @Annotations\QueryParam(name="limit", requirements="\d+", default="5", description="How many notifications to return.")
+     * @Annotations\View(
+     *   templateVar="notifications"
+     * )
+     *
+     * @param Request                $request       the request object
+     * @param ParamFetcherInterface  $paramFetcher  param fetcher service
+     *
+     * @return array
+     */
+    public function getNotificationsAction(Request $request,
+                                           ParamFetcherInterface $paramFetcher)
+    {
+        $offset = $paramFetcher->get('offset');
+        $offset = null == $offset ? 0 : $offset;
+        $limit = $paramFetcher->get('limit');
+
+        return $this->getNotificationHandler()->all($limit, $offset);
+    }
 
     /**
      * Get single Notification,
@@ -137,6 +169,48 @@ class NotificationController extends FOSRestController
     }
 
     /**
+     * Update existing notifications from the submitted data or create a new notification at a specific location.
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   input = "PROCERGS\NotificationBundle\Form\NotificationType",
+     *   statusCodes = {
+     *     204 = "Returned when successful",
+     *     400 = "Returned when the form has errors"
+     *   }
+     * )
+     *
+     * @Annotations\View(
+     *   template = "PROCERGSNotificationServiceBundle:Notification:editNotification.html.twig",
+     *   templateVar = "form"
+     * )
+     *
+     * @param Request $request  the request object
+     * @param int     $id       the notification id
+     *
+     * @return FormTypeInterface|View
+     *
+     * @throws NotFoundHttpException when notification not exist
+     */
+    public function patchNotificationAction(Request $request, $id)
+    {
+        try {
+            $notification = $this->getNotificationHandler()->patch(
+                    $this->getOr404($id), $request->request->all()
+            );
+
+            $routeOptions = array(
+                'id' => $notification->getId(),
+                '_format' => $request->get('_format')
+            );
+
+            return $this->routeRedirectView('api_1_get_notification', $routeOptions, Codes::HTTP_NO_CONTENT);
+        } catch (InvalidFormException $e) {
+            return $e->getForm();
+        }
+    }
+
+    /**
      * Fetch a Notification or throw an 404 Exception.
      *
      * @param mixed $id
@@ -153,6 +227,10 @@ class NotificationController extends FOSRestController
         return $notification;
     }
 
+    /**
+     *
+     * @return \PROCERGS\NotificationServiceBundle\Handler\NotificationHandlerInterface
+     */
     protected function getNotificationHandler()
     {
         return $this->get('procergs_notification_service.notification.handler');

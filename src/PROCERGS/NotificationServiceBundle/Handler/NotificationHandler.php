@@ -26,9 +26,9 @@ class NotificationHandler implements NotificationHandlerInterface
         $this->formFactory = $formFactory;
     }
 
-    public function all($limit = 5, $offset = 0)
+    public function all($limit = 5, $offset = 0, $orderby = null)
     {
-        return $this->repository->findBy(array(), null, $limit, $offset);
+        return $this->repository->findBy(array(), $orderby, $limit, $offset);
     }
 
     public function get($id)
