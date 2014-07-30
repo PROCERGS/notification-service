@@ -17,7 +17,9 @@ class LoadNotificationData implements FixtureInterface
         $notification->setTitle('title')
                 ->setShortText('shortText')
                 ->setText('text')
-                ->setCreatedAt(new \DateTime());
+                ->setLevel(1)
+                ->setReceiver('receiver1')
+                ->setSender('sender1');
 
         $manager->persist($notification);
         $manager->flush();

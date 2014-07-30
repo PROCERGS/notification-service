@@ -30,7 +30,7 @@ class NotificationController extends FOSRestController
      * @param Request $request the request object
      * @param int     $id
      * @return array
-     * @throws NotFoundHttpException when page not exist
+     * @throws NotFoundHttpException when notification not exist
      */
     public function getNotificationAction($id)
     {
@@ -45,7 +45,7 @@ class NotificationController extends FOSRestController
      * @ApiDoc(
      *   resource = true,
      *   description = "Creates a new notification from the submitted data.",
-     *   input = "PROCERGS\NotificationServiceBundle\Form\PageType",
+     *   input = "PROCERGS\NotificationServiceBundle\Form\NotificationType",
      *   statusCodes = {
      *     200 = "Returned when successfull",
      *     400 = "Returned when the form has errors"
@@ -72,8 +72,8 @@ class NotificationController extends FOSRestController
                 '_format' => $request->get('_format')
             );
 
-            return $this->routeRedirectView('api_1_get_notification', $routeOptions,
-                            Codes::HTTP_CREATED);
+            return $this->routeRedirectView('api_1_get_notification',
+                            $routeOptions, Codes::HTTP_CREATED);
         } catch (InvalidFormException $exception) {
             return $exception->getForm();
         }
@@ -82,6 +82,58 @@ class NotificationController extends FOSRestController
     public function newNotificationAction()
     {
         return $this->createForm(new NotificationType());
+    }
+
+    /**
+     * Update existing notification from the submitted data or create a new notification at a specific location.
+     *
+     * @ApiDoc(
+     *   resource = true,
+     *   input = "PROCERGS\NotificationServiceBundle\Form\NotificationType",
+     *   statusCodes = {
+     *     201 = "Returned when the Notification is created",
+     *     204 = "Returned when successful",
+     *     400 = "Returned when the form has errors"
+     *   }
+     * )
+     *
+     * @Annotations\View(
+     *  template = "PROCERGSNotificationServiceBundle:Notification:editNotification.html.twig",
+     *  templateVar = "form"
+     * )
+     *
+     * @param Request $request the request object
+     * @param int     $id      the notification id
+     *
+     * @return FormTypeInterface|View
+     *
+     * @throws NotFoundHttpException when notification not exist
+     */
+    public function putNotificationAction(Request $request, $id)
+    {
+        try {
+            if (!($notification = $this->getNotificationHandler()->get($id))) {
+                $statusCode = Codes::HTTP_CREATED;
+                $notification = $this->getNotificationHandler()->post(
+                        $request->request->all()
+                );
+            } else {
+                $statusCode = Codes::HTTP_NO_CONTENT;
+                $notification = $this->getNotificationHandler()->put(
+                        $notification, $request->request->all()
+                );
+            }
+
+            $routeOptions = array(
+                'id' => $notification->getId(),
+                '_format' => $request->get('_format')
+            );
+
+            return $this->routeRedirectView('api_1_get_notification',
+                            $routeOptions, $statusCode);
+        } catch (InvalidFormException $exception) {
+            return $exception->getForm();
+        }
     }
 
     /**

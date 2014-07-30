@@ -20,25 +20,26 @@ class NotificationType extends AbstractType
             ->add('shortText')
             ->add('text')
             ->add('callbackUrl')
-            ->add('createdAt')
-            ->add('readDate')
+            ->add('createdAt', 'datetime', array('required' => false, 'widget' => 'single_text'))
+            ->add('readDate', 'datetime', array('required' => false, 'widget' => 'single_text'))
             ->add('isRead')
             ->add('level')
             ->add('receiver')
             ->add('sender')
-            ->add('expireDate')
-            ->add('considerReadDate')
-            ->add('receivedDate')
+            ->add('expireDate', 'datetime', array('required' => false, 'widget' => 'single_text'))
+            ->add('considerReadDate', 'datetime', array('required' => false, 'widget' => 'single_text'))
+            ->add('receivedDate', 'datetime', array('required' => false, 'widget' => 'single_text'))
         ;
     }
-    
+
     /**
      * @param OptionsResolverInterface $resolver
      */
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'PROCERGS\NotificationServiceBundle\Entity\Notification'
+            'data_class' => 'PROCERGS\NotificationServiceBundle\Entity\Notification',
+            'csrf_protection' => false
         ));
     }
 
@@ -47,6 +48,6 @@ class NotificationType extends AbstractType
      */
     public function getName()
     {
-        return 'procergs_notificationservicebundle_notification';
+        return '';
     }
 }
