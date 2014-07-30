@@ -47,7 +47,7 @@ class NotificationController extends FOSRestController
     }
 
     /**
-     * Get single Notification,
+     * Get single Notification.
      *
      * @ApiDoc(
      *   resource = true,
@@ -79,7 +79,7 @@ class NotificationController extends FOSRestController
      *   description = "Creates a new notification from the submitted data.",
      *   input = "PROCERGS\NotificationServiceBundle\Form\NotificationType",
      *   statusCodes = {
-     *     200 = "Returned when successfull",
+     *     200 = "Returned when successful",
      *     400 = "Returned when the form has errors"
      *   }
      * )
