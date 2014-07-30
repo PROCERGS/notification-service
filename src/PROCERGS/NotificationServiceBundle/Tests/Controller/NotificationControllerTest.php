@@ -15,6 +15,54 @@ class NotificationControllerTest extends WebTestCase
         $this->loadFixtures($fixtures);
     }
 
+    public function testJsonGetNotificationAction()
+    {
+        $fixtures = $this->getFixtures();
+        $this->loadFixtures($fixtures);
+        $notifications = LoadNotificationData::$notifications;
+        $notification = array_pop($notifications);
+
+        $route = $this->getUrl('api_1_get_notification',
+                array('id' => $notification->getId(), '_format' => 'json'));
+
+        $this->client->request('GET', $route,
+                array('ACCEPT' => 'application/json'));
+        $response = $this->client->getResponse();
+        $this->assertJsonResponse($response, 200);
+        $content = $response->getContent();
+
+        $decoded = json_decode($content, true);
+        $this->assertTrue(isset($decoded['id']));
+    }
+
+    public function testHeadRoute()
+    {
+        $this->loadFixtures($this->getFixtures());
+        $notifications = LoadNotificationData::$notifications;
+        $notification = array_pop($notifications);
+
+        $url = sprintf('/api/v1/notifications/%d.json', $notification->getId());
+
+        $this->client->request('HEAD', $url,
+                array('ACCEPT' => 'application/json'));
+        $response = $this->client->getResponse();
+        $this->assertJsonResponse($response, 200, false);
+    }
+
+    public function testNewNotificationAction()
+    {
+        $this->client->request(
+                'GET', '/api/v1/notifications/new.json', array(), array()
+        );
+
+        $response = $this->client->getResponse();
+        $this->assertJsonResponse($response, 200, true);
+        $this->assertEquals(
+                '{"children":{"icon":[],"title":[],"shortText":[],"text":[],"callbackUrl":[],"createdAt":[],"readDate":[],"isRead":[],"level":[],"receiver":[],"sender":[],"expireDate":[],"considerReadDate":[],"receivedDate":[]}}',
+                $response->getContent(), $response->getContent()
+        );
+    }
+
     public function testJsonPostNotificationAction()
     {
         $this->client = static::createClient();
@@ -41,12 +89,13 @@ class NotificationControllerTest extends WebTestCase
     public function testJsonPutNotificationActionShouldModify()
     {
         $this->client = static::createClient();
-        $fixtures = array('PROCERGS\NotificationServiceBundle\Tests\Fixtures\Entity\LoadNotificationData');
+        $fixtures = $this->getFixtures();
         $this->customSetUp($fixtures);
         $notifications = LoadNotificationData::$notifications;
         $notification = array_pop($notifications);
 
-        $url = sprintf('http://localhost/api/v1/notifications/%d.json', $notification->getId());
+        $url = sprintf('http://localhost/api/v1/notifications/%d.json',
+                $notification->getId());
 
         $this->client->request('GET', $url,
                 array('ACCEPT' => 'application/json'));
@@ -94,6 +143,30 @@ class NotificationControllerTest extends WebTestCase
         $this->assertJsonResponse($this->client->getResponse(), 201, false);
     }
 
+    public function testJsonPatchNotificationAction()
+    {
+        $this->loadFixtures($this->getFixtures());
+        $notifications = LoadNotificationData::$notifications;
+        $notification = array_pop($notifications);
+        $url = sprintf('/api/v1/notifications/%d.json', $notification->getId());
+
+        $this->client->request(
+                'PATCH', $url, array(), array(),
+                array('CONTENT_TYPE' => 'application/json'),
+                '{"text":"changed!"}'
+        );
+        $response = $this->client->getResponse();
+
+        $this->assertEquals(
+                204, $response->getStatusCode(), $response->getContent()
+        );
+        $this->assertTrue(
+                $response->headers->contains(
+                        'Location', "http://localhost$url"
+                ), $response->headers
+        );
+    }
+
     protected function assertJsonResponse($response, $statusCode = 200,
                                           $checkValidJson = true,
                                           $contentType = 'application/json')
@@ -127,6 +200,21 @@ class NotificationControllerTest extends WebTestCase
             'sender' => "sender$r"
         );
         return json_encode($notification);
+    }
+
+    public function setUp()
+    {
+        $this->auth = array(
+            'PHP_AUTH_USER' => 'user',
+            'PHP_AUTH_PW' => 'userpass',
+        );
+
+        $this->client = static::createClient(array(), $this->auth);
+    }
+
+    protected function getFixtures()
+    {
+        return array('PROCERGS\NotificationServiceBundle\Tests\Fixtures\Entity\LoadNotificationData');
     }
 
 }
