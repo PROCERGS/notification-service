@@ -15,5 +15,18 @@
             <argument>%procergs_notification_service.notification.class%</argument>
             <argument type="service" id="form.factory"></argument>
         </service>
+
+        <service id="wsse.security.authentication.provider"
+                 class="PROCERGS\NotificationServiceBundle\Security\Authentication\Provider\WsseProvider" public="false">
+            <argument /> <!-- User Provider -->
+            <argument>%kernel.cache_dir%/security/nonces</argument>
+            <argument />
+        </service>
+
+        <service id="wsse.security.authentication.listener"
+                 class="PROCERGS\NotificationServiceBundle\Security\Firewall\WsseListener" public="false">
+            <argument type="service" id="security.context"/>
+            <argument type="service" id="security.authentication.manager" />
+        </service>
     </services>
 </container>

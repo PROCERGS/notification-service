@@ -18,6 +18,11 @@ security:
             pattern:  ^/(_(profiler|wdt)|css|images|js)/
             security: false
 
+        wsse_secured:
+            pattern:   ^/api
+            stateless: true
+            wsse:      { lifetime: 30 }
+
         login:
             pattern:  ^/demo/secured/login$
             security: false
@@ -35,5 +40,4 @@ security:
             #    realm: "Secured Demo Area"
 
     access_control:
-        - { path: ^/demo/secured/hello/admin/, roles: ROLE_ADMIN }
-        #- { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY, requires_channel: https }
+        - { path: ^/api/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
