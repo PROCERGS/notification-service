@@ -7,6 +7,9 @@
     <parameters>
         <parameter key="procergs_notification_service.notification.handler.class">PROCERGS\NotificationServiceBundle\Handler\NotificationHandler</parameter>
         <parameter key="procergs_notification_service.notification.class">PROCERGS\NotificationServiceBundle\Entity\Notification</parameter>
+        <parameter key="apikey_user_provider.class">PROCERGS\NotificationServiceBundle\Security\ApiKeyUserProvider</parameter>
+        <parameter key="apikey_authenticator.class">PROCERGS\NotificationServiceBundle\Security\ApiKeyAuthenticator</parameter>
+        <parameter key="api_user.class">PROCERGSNotificationServiceBundle:APIUser</parameter>
     </parameters>
 
     <services>
@@ -14,6 +17,7 @@
             <argument type="service" id="doctrine.orm.entity_manager" />
             <argument>%procergs_notification_service.notification.class%</argument>
             <argument type="service" id="form.factory"></argument>
+            <tag name="security.secure_service"/>
         </service>
 
         <service id="wsse.security.authentication.provider"
@@ -27,6 +31,21 @@
                  class="PROCERGS\NotificationServiceBundle\Security\Firewall\WsseListener" public="false">
             <argument type="service" id="security.context"/>
             <argument type="service" id="security.authentication.manager" />
+        </service>
+
+        <service id="apiuser.repository"
+                 class="Doctrine\ORM\EntityRepository"
+                 factory-service="doctrine.orm.default_entity_manager"
+                 factory-method="getRepository">
+            <argument>%api_user.class%</argument>
+        </service>
+
+        <service id="apikey_user_provider" class="%apikey_user_provider.class%">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+        </service>
+
+        <service id="apikey_authenticator" class="%apikey_authenticator.class%">
+            <argument type="service" id="apikey_user_provider" />
         </service>
     </services>
 </container>

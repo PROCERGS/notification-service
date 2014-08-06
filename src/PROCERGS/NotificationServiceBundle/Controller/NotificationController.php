@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 use PROCERGS\NotificationServiceBundle\Exception\InvalidFormException;
 use PROCERGS\NotificationServiceBundle\Form\NotificationType;
 use FOS\RestBundle\Request\ParamFetcherInterface;
+use JMS\SecurityExtraBundle\Annotation AS JMS;
 
 class NotificationController extends FOSRestController
 {
@@ -35,6 +36,8 @@ class NotificationController extends FOSRestController
      * @param ParamFetcherInterface  $paramFetcher  param fetcher service
      *
      * @return array
+     *
+     * @JMS\Secure(roles="ROLE_LIST_NOTIFICATIONS")
      */
     public function getNotificationsAction(Request $request,
                                            ParamFetcherInterface $paramFetcher)
@@ -49,6 +52,7 @@ class NotificationController extends FOSRestController
     /**
      * Get single Notification.
      *
+     * @JMS\Secure(roles="ROLE_GET_NOTIFICATION")
      * @ApiDoc(
      *   resource = true,
      *   description = "Gets a Notification for a given id",
@@ -91,6 +95,8 @@ class NotificationController extends FOSRestController
      *
      * @param Request $request
      * @return FormTypeInterface|View
+     *
+     * @JMS\PreAuthorize("has_role('ROLE_POST_NOTIFICATION')")
      */
     public function postNotificationAction(Request $request)
     {
@@ -140,6 +146,8 @@ class NotificationController extends FOSRestController
      * @return FormTypeInterface|View
      *
      * @throws NotFoundHttpException when notification not exist
+     *
+     * @JMS\PreAuthorize("has_role('ROLE_PUT_NOTIFICATION')")
      */
     public function putNotificationAction(Request $request, $id)
     {
@@ -191,6 +199,8 @@ class NotificationController extends FOSRestController
      * @return FormTypeInterface|View
      *
      * @throws NotFoundHttpException when notification not exist
+     *
+     * @JMS\PreAuthorize("has_role('ROLE_PATCH_NOTIFICATION')")
      */
     public function patchNotificationAction(Request $request, $id)
     {
