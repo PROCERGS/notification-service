@@ -31,4 +31,4 @@ security:
 
     access_control:
         - { path: ^/api/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
-#        - { path: ^/api/v1, roles: ROLE_API_V1 }
+        - { path: ^/api/v1, roles: [IS_AUTHENTICATED_FULLY, ROLE_API_V1] }
