@@ -70,6 +70,16 @@ sensio_framework_extra:
     router: { annotations: true }
     request: { converters: true }
 
+simple_things_entity_audit:
+    audited_entities:
+        - PROCERGS\NotificationServiceBundle\Entity\APIKey
+        - PROCERGS\NotificationServiceBundle\Entity\Category
+        - PROCERGS\NotificationServiceBundle\Entity\Notification
+        - PROCERGS\NotificationServiceBundle\Entity\Receiver
+        - PROCERGS\NotificationServiceBundle\Entity\ReceiverOption
+        - PROCERGS\NotificationServiceBundle\Entity\Sender
+        - PROCERGS\NotificationServiceBundle\Entity\User
+
 fos_rest:
     param_fetcher_listener: true
     view:

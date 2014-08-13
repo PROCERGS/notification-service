@@ -35,8 +35,8 @@ class ApiKeyUserProvider implements UserProviderInterface
 
     public function loadUserByUsername($username)
     {
-        $apiUsers = $this->em->getRepository('PROCERGSNotificationServiceBundle:APIUser');
-        return $apiUsers->findOneBy(compact('username'));
+        $users = $this->em->getRepository('PROCERGSNotificationServiceBundle:User');
+        return $users->findOneBy(compact('username'));
     }
 
     public function refreshUser(UserInterface $user)

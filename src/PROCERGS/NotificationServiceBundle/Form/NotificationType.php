@@ -8,27 +8,41 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 class NotificationType extends AbstractType
 {
-        /**
+
+    /**
      * @param FormBuilderInterface $builder
      * @param array $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('icon')
-            ->add('title')
-            ->add('shortText')
-            ->add('text')
-            ->add('callbackUrl')
-            ->add('createdAt', 'datetime', array('required' => false, 'widget' => 'single_text'))
-            ->add('readDate', 'datetime', array('required' => false, 'widget' => 'single_text'))
-            ->add('isRead')
-            ->add('level')
-            ->add('receiver')
-            ->add('sender')
-            ->add('expireDate', 'datetime', array('required' => false, 'widget' => 'single_text'))
-            ->add('considerReadDate', 'datetime', array('required' => false, 'widget' => 'single_text'))
-            ->add('receivedDate', 'datetime', array('required' => false, 'widget' => 'single_text'))
+                ->add('icon')
+                ->add('title')
+                ->add('shortText')
+                ->add('text')
+                ->add('callbackUrl')
+                ->add('createdAt', 'datetime',
+                        array('required' => false, 'widget' => 'single_text'))
+                ->add('readDate', 'datetime',
+                        array('required' => false, 'widget' => 'single_text'))
+                ->add('isRead')
+                ->add('level')
+                ->add('receiver', 'collection',
+                        array(
+                    'type' => new ReceiverType(),
+                    'allow_add' => true
+                ))
+                ->add('sender', 'collection',
+                        array(
+                    'type' => new SenderType(),
+                    'allow_add' => true
+                ))
+                ->add('expireDate', 'datetime',
+                        array('required' => false, 'widget' => 'single_text'))
+                ->add('considerReadDate', 'datetime',
+                        array('required' => false, 'widget' => 'single_text'))
+                ->add('receivedDate', 'datetime',
+                        array('required' => false, 'widget' => 'single_text'))
         ;
     }
 
@@ -50,4 +64,5 @@ class NotificationType extends AbstractType
     {
         return '';
     }
+
 }

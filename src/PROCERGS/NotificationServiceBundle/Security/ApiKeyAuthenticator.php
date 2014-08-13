@@ -23,12 +23,10 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface
 
     public function createToken(Request $request, $providerKey)
     {
-        if (!$request->query->has('apikey')) {
-            throw new BadCredentialsException('No API key found');
-        }
+        $apiKey = $this->getApiKey($request);
 
         return new PreAuthenticatedToken(
-                'anon.', $request->query->get('apikey'), $providerKey
+                'anon.', $apiKey, $providerKey
         );
     }
 
@@ -60,6 +58,17 @@ class ApiKeyAuthenticator implements SimplePreAuthenticatorInterface
                                             AuthenticationException $exception)
     {
         return new Response("Authentication Failed.", 403);
+    }
+
+    private function getApiKey(Request $request)
+    {
+        if ($request->query->has('apikey')) {
+            return $request->query->get('apikey');
+        } elseif ($request->headers->has('apikey')) {
+            return $request->headers->get('apikey');
+        } else {
+            throw new BadCredentialsException('No API key found');
+        }
     }
 
 }

@@ -2,18 +2,17 @@
 
 namespace PROCERGS\NotificationServiceBundle\Entity;
 
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Security\Core\User\User;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
+use PROCERGS\NotificationServiceBundle\Model\UserInterface;
 
 /**
- * APIUser
+ * User
  *
  * @ORM\Table()
  * @ORM\Entity
  */
-class APIUser implements UserInterface
+class User implements UserInterface
 {
 
     /**
@@ -50,8 +49,17 @@ class APIUser implements UserInterface
      */
     protected $apiKeys;
 
-    public function __construct($username, $password, array $roles = array(),
-                                $enabled = true, $userNonExpired = true,
+    /**
+     * @var ArrayCollection
+     *
+     * @ORM\OneToMany(targetEntity="Sender", mappedBy="owner")
+     * @var ArrayCollection
+     */
+    private $senders;
+
+    public function __construct($username, $password = null,
+                                array $roles = array(), $enabled = true,
+                                $userNonExpired = true,
                                 $credentialsNonExpired = true,
                                 $userNonLocked = true)
     {
@@ -68,6 +76,24 @@ class APIUser implements UserInterface
         $this->roles = $roles;
 
         $this->apiKeys = new ArrayCollection();
+        $this->senders = new ArrayCollection();
+    }
+
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    public function setUsername($username)
+    {
+        $this->username = $username;
+        return $this;
+    }
+
+    public function setEnabled($enabled = true)
+    {
+        $this->enabled = $enabled;
+        return $this;
     }
 
     /**
@@ -76,6 +102,12 @@ class APIUser implements UserInterface
     public function getRoles()
     {
         return $this->roles;
+    }
+
+    public function setRoles(array $roles)
+    {
+        $this->roles = $roles;
+        return $this;
     }
 
     /**
@@ -151,6 +183,22 @@ class APIUser implements UserInterface
     {
         $this->apiKeys = $apiKeys;
         return $this;
+    }
+
+    public function getSenders()
+    {
+        return $this->senders;
+    }
+
+    public function setSenders(ArrayCollection $senders)
+    {
+        $this->senders = $senders;
+        return $this;
+    }
+
+    public function __toString()
+    {
+        return $this->getUsername();
     }
 
 }

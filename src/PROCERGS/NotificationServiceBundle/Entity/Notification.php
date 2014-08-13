@@ -88,16 +88,18 @@ class Notification implements NotificationInterface
     private $level;
 
     /**
-     * @var string
+     * @var Receiver
      *
-     * @ORM\Column(name="receiver", type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="Receiver", inversedBy="notifications")
+     * @ORM\JoinColumn(name="receiver_id", referencedColumnName="id")
      */
     private $receiver;
 
     /**
-     * @var string
+     * @var Sender
      *
-     * @ORM\Column(name="sender", type="string", length=255)
+     * @ORM\ManyToOne(targetEntity="Sender", inversedBy="notifications")
+     * @ORM\JoinColumn(name="sender_id", referencedColumnName="id")
      */
     private $sender;
 
@@ -121,6 +123,14 @@ class Notification implements NotificationInterface
      * @ORM\Column(name="received_date", type="datetime", nullable=true)
      */
     private $receivedDate;
+
+    /**
+     * @var Category
+     *
+     * @ORM\ManyToOne(targetEntity="Category", inversedBy="notifications")
+     * @ORM\JoinColumn(name="category_id", referencedColumnName="id")
+     */
+    private $category;
 
     /**
      * Get id
@@ -460,6 +470,17 @@ class Notification implements NotificationInterface
     public function setCreatedAtOnPersist()
     {
         $this->setCreatedAt(new \DateTime());
+    }
+
+    public function getCategory()
+    {
+        return $this->category;
+    }
+
+    public function setCategory(Category $category)
+    {
+        $this->category = $category;
+        return $this;
     }
 
 }

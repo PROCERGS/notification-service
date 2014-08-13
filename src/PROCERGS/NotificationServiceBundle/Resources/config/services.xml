@@ -7,9 +7,16 @@
     <parameters>
         <parameter key="procergs_notification_service.notification.handler.class">PROCERGS\NotificationServiceBundle\Handler\NotificationHandler</parameter>
         <parameter key="procergs_notification_service.notification.class">PROCERGS\NotificationServiceBundle\Entity\Notification</parameter>
+
+        <parameter key="procergs_notification_service.user.handler.class">PROCERGS\NotificationServiceBundle\Handler\UserHandler</parameter>
+        <parameter key="procergs_notification_service.user.class">PROCERGS\NotificationServiceBundle\Entity\User</parameter>
+
+        <parameter key="procergs_notification_service.sender.handler.class">PROCERGS\NotificationServiceBundle\Handler\SenderHandler</parameter>
+        <parameter key="procergs_notification_service.sender.class">PROCERGS\NotificationServiceBundle\Entity\Sender</parameter>
+
         <parameter key="apikey_user_provider.class">PROCERGS\NotificationServiceBundle\Security\ApiKeyUserProvider</parameter>
         <parameter key="apikey_authenticator.class">PROCERGS\NotificationServiceBundle\Security\ApiKeyAuthenticator</parameter>
-        <parameter key="api_user.class">PROCERGSNotificationServiceBundle:APIUser</parameter>
+        <parameter key="api_user.class">PROCERGSNotificationServiceBundle:User</parameter>
     </parameters>
 
     <services>
@@ -20,9 +27,23 @@
             <tag name="security.secure_service"/>
         </service>
 
+        <service id="procergs_notification_service.user.handler" class="%procergs_notification_service.user.handler.class%">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument>%procergs_notification_service.user.class%</argument>
+            <argument type="service" id="form.factory"></argument>
+            <tag name="security.secure_service"/>
+        </service>
+
+        <service id="procergs_notification_service.sender.handler" class="%procergs_notification_service.sender.handler.class%">
+            <argument type="service" id="doctrine.orm.entity_manager" />
+            <argument>%procergs_notification_service.sender.class%</argument>
+            <argument type="service" id="form.factory"></argument>
+            <tag name="security.secure_service"/>
+        </service>
+<!--
         <service id="wsse.security.authentication.provider"
                  class="PROCERGS\NotificationServiceBundle\Security\Authentication\Provider\WsseProvider" public="false">
-            <argument /> <!-- User Provider -->
+            <argument /> < ! - - User Provider - - >
             <argument>%kernel.cache_dir%/security/nonces</argument>
             <argument />
         </service>
@@ -32,8 +53,8 @@
             <argument type="service" id="security.context"/>
             <argument type="service" id="security.authentication.manager" />
         </service>
-
-        <service id="apiuser.repository"
+-->
+        <service id="user.repository"
                  class="Doctrine\ORM\EntityRepository"
                  factory-service="doctrine.orm.default_entity_manager"
                  factory-method="getRepository">

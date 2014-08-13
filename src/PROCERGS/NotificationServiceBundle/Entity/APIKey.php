@@ -23,9 +23,9 @@ class APIKey
     protected $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="APIUser", inversedBy="apiKeys")
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="apiKeys")
      * @ORM\JoinColumn(name="user_id", referencedColumnName="id")
-     * @var APIUser
+     * @var User
      */
     protected $user;
 
@@ -76,7 +76,7 @@ class APIKey
         return $this->enabled;
     }
 
-    public function setUser(APIUser $user)
+    public function setUser(User $user)
     {
         $this->user = $user;
         return $this;
